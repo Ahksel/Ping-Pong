@@ -1,125 +1,123 @@
-const canvas = document.getElementById("gameCanvas");
+const canvas = document.getElementById("pongCanvas");
 const ctx = canvas.getContext("2d");
 
+// Variabili di gioco
+let gameStarted = false; // Stato del gioco
+let leftPaddleY = (canvas.height - 100) / 2;
+let rightPaddleY = (canvas.height - 100) / 2;
+const paddleHeight = 100;
 const paddleWidth = 10;
-const paddleHeight = 80;
+const paddleSpeed = 20;
 const ballSize = 10;
-
-let leftPaddleY = (canvas.height - paddleHeight) / 2;
-let rightPaddleY = (canvas.height - paddleHeight) / 2;
 let ballX = canvas.width / 2;
 let ballY = canvas.height / 2;
 let ballSpeedX = 5;
-let ballSpeedY = 3;
+let ballSpeedY = 5;
 let leftScore = 0;
 let rightScore = 0;
+const waitingMessage = "Aspettando un secondo giocatore...";
 
-// Velocità di movimento delle racchette
-const paddleSpeed = 30;
-
-// Stato delle racchette (per evitare che si muovano da sole)
-let leftPaddleUp = false;
-let leftPaddleDown = false;
-let rightPaddleUp = false;
-let rightPaddleDown = false;
-
+// Funzione di disegno
 function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#fff"; // Colore bianco per le racchette
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Pulisce il campo da gioco
+
+    // Mostra messaggio di attesa se il gioco non è iniziato
+    if (!gameStarted) {
+        ctx.font = "30px Arial";
+        ctx.fillText(waitingMessage, canvas.width / 2 - ctx.measureText(waitingMessage).width / 2, canvas.height / 2);
+        return; // Non disegna altro finché il gioco non inizia
+    }
+
+    // Disegna racchette
+    ctx.fillStyle = "white";
     ctx.fillRect(0, leftPaddleY, paddleWidth, paddleHeight); // Racchetta sinistra
     ctx.fillRect(canvas.width - paddleWidth, rightPaddleY, paddleWidth, paddleHeight); // Racchetta destra
+
+    // Disegna pallina
     ctx.beginPath();
     ctx.arc(ballX, ballY, ballSize, 0, Math.PI * 2);
-    ctx.fillStyle = "#fff"; // Colore bianco per la pallina
     ctx.fill();
     ctx.closePath();
-    document.getElementById("score").innerText = `Score: ${leftScore} - ${rightScore}`;
+
+    // Disegna punteggio
+    ctx.font = "30px Arial";
+    ctx.fillText(leftScore, canvas.width / 4, 30);
+    ctx.fillText(rightScore, (canvas.width * 3) / 4, 30);
 }
 
-function update() {
+// Funzione per aggiornare il punteggio e gestire la pallina
+function updateBall() {
     ballX += ballSpeedX;
     ballY += ballSpeedY;
 
-    if (ballY < ballSize || ballY > canvas.height - ballSize) {
-        ballSpeedY = -ballSpeedY;
+    // Controlla collisioni con le racchette
+    if (ballY + ballSize > canvas.height || ballY - ballSize < 0) {
+        ballSpeedY = -ballSpeedY; // Rimbalza verticalmente
+    }
+    
+    // Controllo per la racchetta sinistra
+    if (ballX - ballSize < paddleWidth && ballY > leftPaddleY && ballY < leftPaddleY + paddleHeight) {
+        ballSpeedX = -ballSpeedX; // Rimbalza
     }
 
-    if (ballX < paddleWidth && ballY > leftPaddleY && ballY < leftPaddleY + paddleHeight) {
-        ballSpeedX = -ballSpeedX;
-    } else if (ballX > canvas.width - paddleWidth && ballY > rightPaddleY && ballY < rightPaddleY + paddleHeight) {
-        ballSpeedX = -ballSpeedX;
+    // Controllo per la racchetta destra
+    if (ballX + ballSize > canvas.width - paddleWidth && ballY > rightPaddleY && ballY < rightPaddleY + paddleHeight) {
+        ballSpeedX = -ballSpeedX; // Rimbalza
     }
 
+    // Controlla se un giocatore segna
     if (ballX < 0) {
-        rightScore++;
+        rightScore++; // Giocatore di destra segna
         resetBall();
-        alert("SEI UN CANEPECORA");
     } else if (ballX > canvas.width) {
-        leftScore++;
+        leftScore++; // Giocatore di sinistra segna
         resetBall();
-        alert("SEI UN CANEPECORA");
-    }
-
-    // Movimento delle racchette
-    if (leftPaddleUp && leftPaddleY > 0) {
-        leftPaddleY -= paddleSpeed; // Muovi la racchetta sinistra verso l'alto
-    }
-    if (leftPaddleDown && leftPaddleY < canvas.height - paddleHeight) {
-        leftPaddleY += paddleSpeed; // Muovi la racchetta sinistra verso il basso
-    }
-    if (rightPaddleUp && rightPaddleY > 0) {
-        rightPaddleY -= paddleSpeed; // Muovi la racchetta destra verso l'alto
-    }
-    if (rightPaddleDown && rightPaddleY < canvas.height - paddleHeight) {
-        rightPaddleY += paddleSpeed; // Muovi la racchetta destra verso il basso
     }
 }
 
+// Funzione per ripristinare la posizione della pallina
 function resetBall() {
     ballX = canvas.width / 2;
     ballY = canvas.height / 2;
-    ballSpeedX = -ballSpeedX; // Reverse direction
+    ballSpeedX = -ballSpeedX; // Cambia la direzione della pallina
 }
 
-// Controllo delle racchette con i tasti
+// Funzione per iniziare il gioco
+function startGame() {
+    gameStarted = true;
+}
+
+// Funzione per il secondo giocatore
+function playerJoined() {
+    startGame(); // Inizia il gioco quando il secondo giocatore si unisce
+}
+
+// Controllo delle racchette
+document.addEventListener("mousemove", (event) => {
+    const mouseY = event.clientY - canvas.getBoundingClientRect().top;
+    leftPaddleY = mouseY - paddleHeight / 2; // Raccoglie la posizione del mouse per la racchetta sinistra
+});
+
 document.addEventListener("keydown", (event) => {
-    // Movimento racchetta sinistra
-    if (event.key === "ArrowUp") {
-        leftPaddleUp = true; // Attiva il movimento verso l'alto
-    } else if (event.key === "ArrowDown") {
-        leftPaddleDown = true; // Attiva il movimento verso il basso
-    }
-
-    // Movimento racchetta destra
-    if (event.key === "w") {
-        rightPaddleUp = true; // Attiva il movimento verso l'alto
-    } else if (event.key === "s") {
-        rightPaddleDown = true; // Attiva il movimento verso il basso
+    // Raccoglie i tasti per la racchetta destra
+    if (event.key === "w" && rightPaddleY > 0) {
+        rightPaddleY -= paddleSpeed; // Muovi su
+    } else if (event.key === "s" && rightPaddleY < canvas.height - paddleHeight) {
+        rightPaddleY += paddleSpeed; // Muovi giù
     }
 });
 
-// Disabilita il movimento quando i tasti vengono rilasciati
-document.addEventListener("keyup", (event) => {
-    // Movimento racchetta sinistra
-    if (event.key === "ArrowUp") {
-        leftPaddleUp = false; // Disattiva il movimento verso l'alto
-    } else if (event.key === "ArrowDown") {
-        leftPaddleDown = false; // Disattiva il movimento verso il basso
-    }
+// Aggiungi gestore di eventi per il pulsante "Pronto"
+document.getElementById("readyButton").addEventListener("click", playerJoined);
 
-    // Movimento racchetta destra
-    if (event.key === "w") {
-        rightPaddleUp = false; // Disattiva il movimento verso l'alto
-    } else if (event.key === "s") {
-        rightPaddleDown = false; // Disattiva il movimento verso il basso
+// Ciclo di aggiornamento
+function update() {
+    if (gameStarted) {
+        updateBall();
     }
-});
-
-function gameLoop() {
     draw();
-    update();
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(update);
 }
 
-// Start the game loop
-gameLoop();
+// Inizia il ciclo di aggiornamento
+update();
