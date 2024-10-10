@@ -14,42 +14,36 @@ let ballSpeedY = 3;
 let leftScore = 0;
 let rightScore = 0;
 
+// Velocità di movimento delle racchette
+const paddleSpeed = 20; 
+
 function draw() {
-    // Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw paddles
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, leftPaddleY, paddleWidth, paddleHeight);
-    ctx.fillRect(canvas.width - paddleWidth, rightPaddleY, paddleWidth, paddleHeight);
-
-    // Draw ball
+    ctx.fillStyle = "#fff"; // Colore bianco per le racchette
+    ctx.fillRect(0, leftPaddleY, paddleWidth, paddleHeight); // Racchetta sinistra
+    ctx.fillRect(canvas.width - paddleWidth, rightPaddleY, paddleWidth, paddleHeight); // Racchetta destra
     ctx.beginPath();
     ctx.arc(ballX, ballY, ballSize, 0, Math.PI * 2);
+    ctx.fillStyle = "#fff"; // Colore bianco per la pallina
     ctx.fill();
-
-    // Draw score
+    ctx.closePath();
     document.getElementById("score").innerText = `Score: ${leftScore} - ${rightScore}`;
 }
 
 function update() {
-    // Move the ball
     ballX += ballSpeedX;
     ballY += ballSpeedY;
 
-    // Ball collision with top and bottom
     if (ballY < ballSize || ballY > canvas.height - ballSize) {
         ballSpeedY = -ballSpeedY;
     }
 
-    // Ball collision with paddles
     if (ballX < paddleWidth && ballY > leftPaddleY && ballY < leftPaddleY + paddleHeight) {
         ballSpeedX = -ballSpeedX;
     } else if (ballX > canvas.width - paddleWidth && ballY > rightPaddleY && ballY < rightPaddleY + paddleHeight) {
         ballSpeedX = -ballSpeedX;
     }
 
-    // Check if ball goes out of bounds
     if (ballX < 0) {
         rightScore++;
         resetBall();
@@ -67,25 +61,26 @@ function resetBall() {
     ballSpeedX = -ballSpeedX; // Reverse direction
 }
 
-document.addEventListener("mousemove", (event) => {
-    const mouseY = event.clientY - canvas.getBoundingClientRect().top;
-    if (mouseY >= 0 && mouseY <= canvas.height - paddleHeight) {
-        leftPaddleY = mouseY;
+// Controllo delle racchette con i tasti
+document.addEventListener("keydown", (event) => {
+    // Movimento racchetta sinistra
+    if (event.key === "ArrowUp" && leftPaddleY > 0) {
+        leftPaddleY -= paddleSpeed; // Muovi la racchetta sinistra verso l'alto
+    } else if (event.key === "ArrowDown" && leftPaddleY < canvas.height - paddleHeight) {
+        leftPaddleY += paddleSpeed; // Muovi la racchetta sinistra verso il basso
+    }
+
+    // Movimento racchetta destra
+    if (event.key === "w" && rightPaddleY > 0) {
+        rightPaddleY -= paddleSpeed; // Muovi la racchetta destra verso l'alto
+    } else if (event.key === "s" && rightPaddleY < canvas.height - paddleHeight) {
+        rightPaddleY += paddleSpeed; // Muovi la racchetta destra verso il basso
     }
 });
-
-function aiMove() {
-    if (rightPaddleY + paddleHeight / 2 < ballY) {
-        rightPaddleY += 4; // AI moves down
-    } else {
-        rightPaddleY -= 4; // AI moves up
-    }
-}
 
 function gameLoop() {
     draw();
     update();
-    aiMove();
     requestAnimationFrame(gameLoop);
 }
 
