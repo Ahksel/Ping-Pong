@@ -12,15 +12,17 @@
             height: 100vh;
             margin: 0;
             background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
         }
         canvas {
-            border: 1px solid white;
+            border: 1px solid #fff;
         }
     </style>
 </head>
 <body>
     <canvas id="gameCanvas" width="800" height="400"></canvas>
-    <div id="score" style="color: white; position: absolute; top: 10px; left: 50%; transform: translateX(-50%); font-size: 24px;">0 : 0</div>
+    <div id="score" style="text-align: center; margin-top: 20px; font-size: 24px;"></div>
     <script src="pong.js"></script>
 </body>
 </html>
