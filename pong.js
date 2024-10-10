@@ -3,8 +3,8 @@ const ctx = canvas.getContext("2d");
 
 // Variabili di gioco
 let gameStarted = false; // Stato del gioco
-let leftPaddleY = (canvas.height - 100) / 2;
-let rightPaddleY = (canvas.height - 100) / 2;
+let leftPaddleY = (canvas.height - 100) / 2; // Posizione della racchetta di sinistra
+let rightPaddleY = (canvas.height - 100) / 2; // Posizione della racchetta di destra
 const paddleHeight = 100;
 const paddleWidth = 10;
 const paddleSpeed = 20;
@@ -16,6 +16,7 @@ let ballSpeedY = 5;
 let leftScore = 0;
 let rightScore = 0;
 const waitingMessage = "Aspettando un secondo giocatore...";
+const sessionId = Math.random().toString(36).substring(2, 15); // Genera un ID di sessione unico
 
 // Funzione di disegno
 function draw() {
@@ -89,6 +90,7 @@ function startGame() {
 
 // Funzione per il secondo giocatore
 function playerJoined() {
+    console.log(`Giocatore unito con ID sessione: ${sessionId}`);
     startGame(); // Inizia il gioco quando il secondo giocatore si unisce
 }
 
@@ -98,14 +100,8 @@ document.addEventListener("mousemove", (event) => {
     leftPaddleY = mouseY - paddleHeight / 2; // Raccoglie la posizione del mouse per la racchetta sinistra
 });
 
-document.addEventListener("keydown", (event) => {
-    // Raccoglie i tasti per la racchetta destra
-    if (event.key === "w" && rightPaddleY > 0) {
-        rightPaddleY -= paddleSpeed; // Muovi su
-    } else if (event.key === "s" && rightPaddleY < canvas.height - paddleHeight) {
-        rightPaddleY += paddleSpeed; // Muovi giù
-    }
-});
+// Non controllare la racchetta di destra in questo esempio
+// Potresti implementare un sistema per farla controllare da un secondo giocatore
 
 // Aggiungi gestore di eventi per il pulsante "Pronto"
 document.getElementById("readyButton").addEventListener("click", playerJoined);
