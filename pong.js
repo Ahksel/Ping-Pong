@@ -15,7 +15,7 @@ let leftScore = 0;
 let rightScore = 0;
 
 // Velocità di movimento delle racchette
-const paddleSpeed = 20;
+const paddleSpeed = 30;
 
 // Stato delle racchette (per evitare che si muovano da sole)
 let leftPaddleUp = false;
