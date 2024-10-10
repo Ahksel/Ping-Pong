@@ -15,7 +15,13 @@ let leftScore = 0;
 let rightScore = 0;
 
 // Velocità di movimento delle racchette
-const paddleSpeed = 20; 
+const paddleSpeed = 20;
+
+// Stato delle racchette (per evitare che si muovano da sole)
+let leftPaddleUp = false;
+let leftPaddleDown = false;
+let rightPaddleUp = false;
+let rightPaddleDown = false;
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -53,6 +59,20 @@ function update() {
         resetBall();
         alert("SEI UN CANEPECORA");
     }
+
+    // Movimento delle racchette
+    if (leftPaddleUp && leftPaddleY > 0) {
+        leftPaddleY -= paddleSpeed; // Muovi la racchetta sinistra verso l'alto
+    }
+    if (leftPaddleDown && leftPaddleY < canvas.height - paddleHeight) {
+        leftPaddleY += paddleSpeed; // Muovi la racchetta sinistra verso il basso
+    }
+    if (rightPaddleUp && rightPaddleY > 0) {
+        rightPaddleY -= paddleSpeed; // Muovi la racchetta destra verso l'alto
+    }
+    if (rightPaddleDown && rightPaddleY < canvas.height - paddleHeight) {
+        rightPaddleY += paddleSpeed; // Muovi la racchetta destra verso il basso
+    }
 }
 
 function resetBall() {
@@ -64,17 +84,34 @@ function resetBall() {
 // Controllo delle racchette con i tasti
 document.addEventListener("keydown", (event) => {
     // Movimento racchetta sinistra
-    if (event.key === "ArrowUp" && leftPaddleY > 0) {
-        leftPaddleY -= paddleSpeed; // Muovi la racchetta sinistra verso l'alto
-    } else if (event.key === "ArrowDown" && leftPaddleY < canvas.height - paddleHeight) {
-        leftPaddleY += paddleSpeed; // Muovi la racchetta sinistra verso il basso
+    if (event.key === "ArrowUp") {
+        leftPaddleUp = true; // Attiva il movimento verso l'alto
+    } else if (event.key === "ArrowDown") {
+        leftPaddleDown = true; // Attiva il movimento verso il basso
     }
 
     // Movimento racchetta destra
-    if (event.key === "w" && rightPaddleY > 0) {
-        rightPaddleY -= paddleSpeed; // Muovi la racchetta destra verso l'alto
-    } else if (event.key === "s" && rightPaddleY < canvas.height - paddleHeight) {
-        rightPaddleY += paddleSpeed; // Muovi la racchetta destra verso il basso
+    if (event.key === "w") {
+        rightPaddleUp = true; // Attiva il movimento verso l'alto
+    } else if (event.key === "s") {
+        rightPaddleDown = true; // Attiva il movimento verso il basso
+    }
+});
+
+// Disabilita il movimento quando i tasti vengono rilasciati
+document.addEventListener("keyup", (event) => {
+    // Movimento racchetta sinistra
+    if (event.key === "ArrowUp") {
+        leftPaddleUp = false; // Disattiva il movimento verso l'alto
+    } else if (event.key === "ArrowDown") {
+        leftPaddleDown = false; // Disattiva il movimento verso il basso
+    }
+
+    // Movimento racchetta destra
+    if (event.key === "w") {
+        rightPaddleUp = false; // Disattiva il movimento verso l'alto
+    } else if (event.key === "s") {
+        rightPaddleDown = false; // Disattiva il movimento verso il basso
     }
 });
 
