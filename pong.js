@@ -18,6 +18,9 @@ let rightScore = 0;
 const waitingMessage = "Aspettando un secondo giocatore...";
 const sessionId = Math.random().toString(36).substring(2, 15); // Genera un ID di sessione unico
 
+// Mostra l'ID di sessione
+document.getElementById("sessionId").innerText += sessionId;
+
 // Funzione di disegno
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Pulisce il campo da gioco
@@ -94,14 +97,20 @@ function playerJoined() {
     startGame(); // Inizia il gioco quando il secondo giocatore si unisce
 }
 
-// Controllo delle racchette
+// Controllo della racchetta sinistra
 document.addEventListener("mousemove", (event) => {
     const mouseY = event.clientY - canvas.getBoundingClientRect().top;
     leftPaddleY = mouseY - paddleHeight / 2; // Raccoglie la posizione del mouse per la racchetta sinistra
 });
 
-// Non controllare la racchetta di destra in questo esempio
-// Potresti implementare un sistema per farla controllare da un secondo giocatore
+// Controllo della racchetta destra
+document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowUp") {
+        rightPaddleY = Math.max(rightPaddleY - paddleSpeed, 0); // Muove la racchetta destra verso l'alto
+    } else if (event.key === "ArrowDown") {
+        rightPaddleY = Math.min(rightPaddleY + paddleSpeed, canvas.height - paddleHeight); // Muove la racchetta destra verso il basso
+    }
+});
 
 // Aggiungi gestore di eventi per il pulsante "Pronto"
 document.getElementById("readyButton").addEventListener("click", playerJoined);
