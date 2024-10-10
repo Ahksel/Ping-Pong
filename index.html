@@ -1,21 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Tennis Game</title>
+    <title>Ping Pong Game</title>
     <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+        }
         canvas {
-            background: #000;
-            display: block;
-            margin: 0 auto;
+            border: 1px solid white;
         }
     </style>
 </head>
 <body>
-
-<canvas id="gameCanvas" width="800" height="400"></canvas>
-
-<script src="pong.js"></script>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <div id="score" style="color: white; position: absolute; top: 10px; left: 50%; transform: translateX(-50%); font-size: 24px;">0 : 0</div>
+    <script src="pong.js"></script>
 </body>
 </html>
